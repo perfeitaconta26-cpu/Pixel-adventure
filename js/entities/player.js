@@ -1,4 +1,4 @@
-class Player {
+class Player{
 
 constructor(x,y){
 
@@ -52,7 +52,7 @@ this.onGround = true
 }
 
 if(this.vx !== 0){
-this.walkFrame += 0.2
+this.walkFrame += 0.25
 }else{
 this.walkFrame = 0
 }
@@ -96,4 +96,14 @@ ctx.restore()
 
 }
 
+}
+
+let player
+
+function updatePlayer(){
+player.update()
+}
+
+function drawPlayer(ctx){
+player.draw(ctx)
 }
