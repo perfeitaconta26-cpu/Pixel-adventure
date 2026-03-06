@@ -1,7 +1,8 @@
 const player = {
     x: 100,
     y: 300,
-    width: 60,
+
+    width: 40,
     height: 70,
 
     vx: 0,
@@ -12,22 +13,14 @@ const player = {
     gravity: 0.6,
 
     onGround: false,
-
     direction: 1,
-
     walkFrame: 0
 };
 
 const keys = {};
 
-document.addEventListener("keydown", (e)=>{
-    keys[e.key] = true;
-});
-
-document.addEventListener("keyup", (e)=>{
-    keys[e.key] = false;
-});
-
+document.addEventListener("keydown", e => keys[e.key] = true);
+document.addEventListener("keyup", e => keys[e.key] = false);
 
 function updatePlayer(){
 
@@ -62,12 +55,10 @@ function updatePlayer(){
 
     if(player.vx !== 0){
         player.walkFrame += 0.2;
-    }else{
+    } else {
         player.walkFrame = 0;
     }
-
 }
-
 
 function drawPlayer(ctx){
 
@@ -82,26 +73,25 @@ function drawPlayer(ctx){
     const y = player.y;
 
     // cabeça
-    ctx.fillStyle = "#ffd39b";
-    ctx.fillRect(x+20, y, 20, 20);
+    ctx.fillStyle = "#f5cfa0";
+    ctx.fillRect(x+12, y, 16, 16);
 
     // corpo
-    ctx.fillStyle = "#3a6df0";
-    ctx.fillRect(x+20, y+20, 20, 30);
+    ctx.fillStyle = "#2f6df2";
+    ctx.fillRect(x+12, y+16, 16, 24);
 
     // braços
-    ctx.fillStyle = "#ffd39b";
-    ctx.fillRect(x+5, y+22, 15, 10);
-    ctx.fillRect(x+40, y+22, 15, 10);
+    ctx.fillStyle = "#f5cfa0";
+    ctx.fillRect(x, y+18, 12, 6);
+    ctx.fillRect(x+28, y+18, 12, 6);
 
-    // animação das pernas
-    let legOffset = Math.sin(player.walkFrame) * 5;
+    // pernas animadas
+    let leg = Math.sin(player.walkFrame)*4;
 
     ctx.fillStyle = "#222";
 
-    ctx.fillRect(x+20, y+50, 8, 20 + legOffset);
-    ctx.fillRect(x+32, y+50, 8, 20 - legOffset);
+    ctx.fillRect(x+12, y+40, 6, 20+leg);
+    ctx.fillRect(x+22, y+40, 6, 20-leg);
 
     ctx.restore();
-
 }
