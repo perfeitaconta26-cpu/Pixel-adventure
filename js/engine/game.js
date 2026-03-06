@@ -59,7 +59,7 @@ coins.forEach(c=>c.draw())
 
 enemies.forEach(e=>e.draw())
 
-player.draw()
+player.draw(ctx)
 
 ctx.restore()
 
