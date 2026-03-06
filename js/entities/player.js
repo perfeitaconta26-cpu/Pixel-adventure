@@ -1,97 +1,99 @@
-const player = {
-    x: 100,
-    y: 300,
+class Player {
 
-    width: 40,
-    height: 70,
+constructor(x,y){
 
-    vx: 0,
-    vy: 0,
+this.x = x
+this.y = y
 
-    speed: 4,
-    jumpPower: 12,
-    gravity: 0.6,
+this.width = 40
+this.height = 70
 
-    onGround: false,
-    direction: 1,
-    walkFrame: 0
-};
+this.vx = 0
+this.vy = 0
 
-const keys = {};
+this.speed = 4
+this.jumpPower = 12
+this.gravity = 0.6
 
-document.addEventListener("keydown", e => keys[e.key] = true);
-document.addEventListener("keyup", e => keys[e.key] = false);
+this.onGround = false
+this.direction = 1
+this.walkFrame = 0
 
-function updatePlayer(){
-
-    player.vx = 0;
-
-    if(keys["ArrowRight"] || keys["d"]){
-        player.vx = player.speed;
-        player.direction = 1;
-    }
-
-    if(keys["ArrowLeft"] || keys["a"]){
-        player.vx = -player.speed;
-        player.direction = -1;
-    }
-
-    if((keys[" "] || keys["w"] || keys["ArrowUp"]) && player.onGround){
-        player.vy = -player.jumpPower;
-        player.onGround = false;
-    }
-
-    player.vy += player.gravity;
-
-    player.x += player.vx;
-    player.y += player.vy;
-
-    // chão simples
-    if(player.y > 330){
-        player.y = 330;
-        player.vy = 0;
-        player.onGround = true;
-    }
-
-    if(player.vx !== 0){
-        player.walkFrame += 0.2;
-    } else {
-        player.walkFrame = 0;
-    }
 }
 
-function drawPlayer(ctx){
+update(){
 
-    ctx.save();
+this.vx = 0
 
-    if(player.direction === -1){
-        ctx.scale(-1,1);
-        ctx.translate(-player.x*2-player.width,0);
-    }
+if(keys["ArrowRight"] || keys["d"]){
+this.vx = this.speed
+this.direction = 1
+}
 
-    const x = player.x;
-    const y = player.y;
+if(keys["ArrowLeft"] || keys["a"]){
+this.vx = -this.speed
+this.direction = -1
+}
 
-    // cabeça
-    ctx.fillStyle = "#f5cfa0";
-    ctx.fillRect(x+12, y, 16, 16);
+if((keys[" "] || keys["w"] || keys["ArrowUp"]) && this.onGround){
+this.vy = -this.jumpPower
+this.onGround = false
+}
 
-    // corpo
-    ctx.fillStyle = "#2f6df2";
-    ctx.fillRect(x+12, y+16, 16, 24);
+this.vy += this.gravity
 
-    // braços
-    ctx.fillStyle = "#f5cfa0";
-    ctx.fillRect(x, y+18, 12, 6);
-    ctx.fillRect(x+28, y+18, 12, 6);
+this.x += this.vx
+this.y += this.vy
 
-    // pernas animadas
-    let leg = Math.sin(player.walkFrame)*4;
+if(this.y > 330){
+this.y = 330
+this.vy = 0
+this.onGround = true
+}
 
-    ctx.fillStyle = "#222";
+if(this.vx !== 0){
+this.walkFrame += 0.2
+}else{
+this.walkFrame = 0
+}
 
-    ctx.fillRect(x+12, y+40, 6, 20+leg);
-    ctx.fillRect(x+22, y+40, 6, 20-leg);
+}
 
-    ctx.restore();
+draw(ctx){
+
+ctx.save()
+
+if(this.direction === -1){
+ctx.scale(-1,1)
+ctx.translate(-this.x*2-this.width,0)
+}
+
+const x = this.x
+const y = this.y
+
+// cabeça
+ctx.fillStyle = "#f5cfa0"
+ctx.fillRect(x+12,y,16,16)
+
+// corpo
+ctx.fillStyle = "#2f6df2"
+ctx.fillRect(x+12,y+16,16,24)
+
+// braços
+ctx.fillStyle = "#f5cfa0"
+ctx.fillRect(x,y+18,12,6)
+ctx.fillRect(x+28,y+18,12,6)
+
+// pernas animadas
+let leg = Math.sin(this.walkFrame)*4
+
+ctx.fillStyle = "#222"
+
+ctx.fillRect(x+12,y+40,6,20+leg)
+ctx.fillRect(x+22,y+40,6,20-leg)
+
+ctx.restore()
+
+}
+
 }
