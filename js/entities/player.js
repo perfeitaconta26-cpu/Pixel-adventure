@@ -1,74 +1,82 @@
 const player = {
     x: 100,
     y: 300,
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 70,
+
     vx: 0,
     vy: 0,
-    frame: 0,
-    animation: "idle"
+
+    speed: 4,
+    jumpPower: 12,
+    gravity: 0.6,
+
+    onGround: false,
+
+    direction: 1,
+
+    walkFrame: 0
 };
 
-const sprites = {
-    idle: [
-        "assets/sprites/player/idle1.png",
-        "assets/sprites/player/idle2.png"
-    ],
+const keys = {};
 
-    walk: [
-        "assets/sprites/player/walk1.png",
-        "assets/sprites/player/walk2.png",
-        "assets/sprites/player/walk3.png",
-        "assets/sprites/player/walk4.png",
-        "assets/sprites/player/walk5.png",
-        "assets/sprites/player/walk6.png"
-    ],
+document.addEventListener("keydown", (e)=>{
+    keys[e.key] = true;
+});
 
-    jump: [
-        "assets/sprites/player/jump.png"
-    ],
+document.addEventListener("keyup", (e)=>{
+    keys[e.key] = false;
+});
 
-    fall: [
-        "assets/sprites/player/fall.png"
-    ]
-};
 
-let images = {};
+function updatePlayer(){
 
-for (let anim in sprites) {
-    images[anim] = sprites[anim].map(src => {
-        const img = new Image();
-        img.src = src;
-        return img;
-    });
+    player.vx = 0;
+
+    if(keys["ArrowRight"] || keys["d"]){
+        player.vx = player.speed;
+        player.direction = 1;
+    }
+
+    if(keys["ArrowLeft"] || keys["a"]){
+        player.vx = -player.speed;
+        player.direction = -1;
+    }
+
+    if((keys[" "] || keys["w"] || keys["ArrowUp"]) && player.onGround){
+        player.vy = -player.jumpPower;
+        player.onGround = false;
+    }
+
+    player.vy += player.gravity;
+
+    player.x += player.vx;
+    player.y += player.vy;
+
+    // chão simples
+    if(player.y > 330){
+        player.y = 330;
+        player.vy = 0;
+        player.onGround = true;
+    }
+
+    if(player.vx !== 0){
+        player.walkFrame += 0.2;
+    }else{
+        player.walkFrame = 0;
+    }
+
 }
 
-function updateAnimation() {
-
-    if (player.vy < -1) {
-        player.animation = "jump";
-    }
-
-    else if (player.vy > 1) {
-        player.animation = "fall";
-    }
-
-    else if (player.vx !== 0) {
-        player.animation = "walk";
-    }
-
-    else {
-        player.animation = "idle";
-    }
-
-    player.frame++;
-
-    if (player.frame >= images[player.animation].length) {
-        player.frame = 0;
-    }
-}
 
 function drawPlayer(ctx){
+
+    ctx.save();
+
+    if(player.direction === -1){
+        ctx.scale(-1,1);
+        ctx.translate(-player.x*2-player.width,0);
+    }
 
     const x = player.x;
     const y = player.y;
@@ -83,12 +91,17 @@ function drawPlayer(ctx){
 
     // braços
     ctx.fillStyle = "#ffd39b";
-    ctx.fillRect(x+5, y+20, 15, 10);
-    ctx.fillRect(x+40, y+20, 15, 10);
+    ctx.fillRect(x+5, y+22, 15, 10);
+    ctx.fillRect(x+40, y+22, 15, 10);
 
-    // pernas
+    // animação das pernas
+    let legOffset = Math.sin(player.walkFrame) * 5;
+
     ctx.fillStyle = "#222";
-    ctx.fillRect(x+20, y+50, 8, 20);
-    ctx.fillRect(x+32, y+50, 8, 20);
+
+    ctx.fillRect(x+20, y+50, 8, 20 + legOffset);
+    ctx.fillRect(x+32, y+50, 8, 20 - legOffset);
+
+    ctx.restore();
 
 }
