@@ -1,66 +1,94 @@
-class Player{
+const player = {
+    x: 100,
+    y: 300,
+    width: 80,
+    height: 80,
+    vx: 0,
+    vy: 0,
+    frame: 0,
+    animation: "idle"
+};
 
-constructor(x,y){
+const sprites = {
+    idle: [
+        "assets/sprites/player/idle1.png",
+        "assets/sprites/player/idle2.png"
+    ],
 
-this.x=x
-this.y=y
+    walk: [
+        "assets/sprites/player/walk1.png",
+        "assets/sprites/player/walk2.png",
+        "assets/sprites/player/walk3.png",
+        "assets/sprites/player/walk4.png",
+        "assets/sprites/player/walk5.png",
+        "assets/sprites/player/walk6.png"
+    ],
 
-this.w=40
-this.h=40
+    jump: [
+        "assets/sprites/player/jump.png"
+    ],
 
-this.velX=0
-this.velY=0
+    fall: [
+        "assets/sprites/player/fall.png"
+    ]
+};
 
-this.speed=4
-this.jump=12
+let images = {};
 
-this.gravity=0.6
-
-this.onGround=false
-
+for (let anim in sprites) {
+    images[anim] = sprites[anim].map(src => {
+        const img = new Image();
+        img.src = src;
+        return img;
+    });
 }
 
-update(){
+function updateAnimation() {
 
-this.velX=0
+    if (player.vy < -1) {
+        player.animation = "jump";
+    }
 
-if(keys["a"]||keys["ArrowLeft"]) this.velX=-this.speed
-if(keys["d"]||keys["ArrowRight"]) this.velX=this.speed
+    else if (player.vy > 1) {
+        player.animation = "fall";
+    }
 
-if((keys[" "]||keys["w"]) && this.onGround){
+    else if (player.vx !== 0) {
+        player.animation = "walk";
+    }
 
-this.velY=-this.jump
-this.onGround=false
+    else {
+        player.animation = "idle";
+    }
 
+    player.frame++;
+
+    if (player.frame >= images[player.animation].length) {
+        player.frame = 0;
+    }
 }
 
-this.velY+=this.gravity
+function drawPlayer(ctx){
 
-this.x+=this.velX
-this.y+=this.velY
+    const x = player.x;
+    const y = player.y;
 
-this.onGround=false
+    // cabeça
+    ctx.fillStyle = "#ffd39b";
+    ctx.fillRect(x+20, y, 20, 20);
 
-platforms.forEach(p=>{
+    // corpo
+    ctx.fillStyle = "#3a6df0";
+    ctx.fillRect(x+20, y+20, 20, 30);
 
-if(collide(this,p)){
+    // braços
+    ctx.fillStyle = "#ffd39b";
+    ctx.fillRect(x+5, y+20, 15, 10);
+    ctx.fillRect(x+40, y+20, 15, 10);
 
-this.y=p.y-this.h
-this.velY=0
-this.onGround=true
-
-}
-
-})
-
-}
-
-draw(){
-
-ctx.fillStyle="red"
-
-ctx.fillRect(this.x,this.y,this.w,this.h)
-
-}
+    // pernas
+    ctx.fillStyle = "#222";
+    ctx.fillRect(x+20, y+50, 8, 20);
+    ctx.fillRect(x+32, y+50, 8, 20);
 
 }
